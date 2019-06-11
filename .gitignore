@@ -1,0 +1,28 @@
+# =================== #
+# Project generated
+# =================== #
+
+Temp/
+Resources/
+
+
+# ================== #
+# Script Files
+# ================== #
+
+# *.somefileext #
+
+
+# ================== #
+# OS gen    
+# ================== #
+
+.DS_Store
+.DS_Store?
+*.lnk
+._*
+.Spotlight-v100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
