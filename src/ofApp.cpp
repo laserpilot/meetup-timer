@@ -2,10 +2,17 @@
 
 #define STARTSOUND "startSound"
 #define ONEMINUTEWARNING "oneMinuteWarning"
-#define TIMESUP "timesup"
+#define TIMESUP "endSound"
 #define WAYOVER "leaveNowSound"
 #define WAYWAYOVER "reallyLeaveNowSound"
 
+/*
+ timer is starting
+ one minute left
+ your time is up
+ please wrap it up quickly, you've gone overtime
+ ok, time to give someone else a chance!
+ */
 
 void SessionWarningSystem::addWarning(string name){
 	SessionWarning warning;
@@ -34,6 +41,7 @@ void ofApp::setup(){
     gui.add(resetTimer.setup("Reset Timer", false));
     gui.add(timerIsPaused.setup("Pause Timer", false));
     gui.add(totalMin.setup("Total Min", 5,1,15));
+	
     
     timerBegin = ofGetElapsedTimef();
     
@@ -126,7 +134,8 @@ void ofApp::draw(){
 		warnings.triggerWarning(TIMESUP);
 		if(presentationTime>totalTime+30.){
 			warnings.triggerWarning(WAYOVER);
-		}else if (presentationTime>totalTime+60.){
+		}
+		if (presentationTime>totalTime+60.){
 			warnings.triggerWarning(WAYWAYOVER);
 		}
     }
