@@ -55,6 +55,9 @@ void ofApp::setup(){
     font.load("verdana.ttf", 200, true, true);
     font.setLetterSpacing(1.037);
     
+	fontTime.load("verdana.ttf",600,true,true);
+	fontTime.setLetterSpacing(1.);
+	
     totalTimePaused = 0;
     instanceTimePaused = 0;
     
@@ -110,6 +113,15 @@ void ofApp::draw(){
      ofDrawRectangle(countDownDist,0,ofGetWidth()-countDownDist, ofGetHeight());
      ofSetColor(255);
     
+	
+	if(presentationTime<totalTime){
+		int invTime = totalTime-presentationTime;
+		int min =invTime/60;
+		int sec = fmod(invTime,60);
+		string time = to_string(min) +":"+ (sec<10?"0":"") +to_string(sec);
+		auto box =fontTime.getStringBoundingBox(time, 0,0);
+		fontTime.drawString(time, (ofGetWidth()/2)-(box.width)/2, ofGetHeight()/2 + box.height*.5);
+	}
     //Flat 1min warning
     if(presentationTime>(totalTime-60) && presentationTime<(totalTime-59.5)){
         ofSetColor(ofRandom(255),ofRandom(255),ofRandom(255));

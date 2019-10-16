@@ -50,6 +50,7 @@ class ofApp : public ofBaseApp{
      int randomColorVal2;
     //bool pauseTimer;
     ofTrueTypeFont font;
+	ofTrueTypeFont fontTime;
     
     ofxPanel gui;
     ofxIntSlider totalMin;
