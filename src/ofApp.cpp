@@ -1,5 +1,32 @@
 #include "ofApp.h"
 
+#define STARTSOUND "startSound"
+#define ONEMINUTEWARNING "oneMinuteWarning"
+#define TIMESUP "timesup"
+#define WAYOVER "leaveNowSound"
+#define WAYWAYOVER "reallyLeaveNowSound"
+
+
+void SessionWarningSystem::addWarning(string name){
+	SessionWarning warning;
+	warning.name = name;
+	warnings[name] = warning;
+}
+void SessionWarningSystem::resetAll(){
+	for(auto& kv:warnings){
+		kv.second.triggered = false;
+	}
+}
+void SessionWarningSystem::triggerWarning(string name){
+	auto& warning=  warnings[name];
+	if(!warning.triggered){
+		warning.triggered = true;
+		// load sound and play it!
+		warningPlayer.load(warning.name+ ".wav");
+		warningPlayer.play();
+	}
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -23,7 +50,16 @@ void ofApp::setup(){
     totalTimePaused = 0;
     instanceTimePaused = 0;
     
+	
+	// setup warnings:
+	warnings.addWarning(STARTSOUND);
+	warnings.addWarning(ONEMINUTEWARNING);
+	warnings.addWarning(TIMESUP);
+	warnings.addWarning(WAYOVER);
+	warnings.addWarning(WAYWAYOVER);
+	
 }
+
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -48,6 +84,9 @@ void ofApp::update(){
         timerBegin = ofGetElapsedTimef();
         totalTimePaused = 0;
         instanceTimePaused = 0;
+		
+		// reset warning flags:
+		warnings.resetAll();
     }
     
 }
@@ -67,6 +106,8 @@ void ofApp::draw(){
     if(presentationTime>(totalTime-60) && presentationTime<(totalTime-59.5)){
         ofSetColor(ofRandom(255),ofRandom(255),ofRandom(255));
         ofDrawRectangle(0,0,ofGetWidth(), ofGetHeight());
+		// this will trigger the one minute warning one time
+		warnings.triggerWarning(ONEMINUTEWARNING);
     }
     //flash when overtime
     if(presentationTime>totalTime){
@@ -78,12 +119,23 @@ void ofApp::draw(){
         ofDrawRectangle(0,0,ofGetWidth(), ofGetHeight());
         
         ofSetColor(255,randomColorVal2,randomColorVal);
-        font.drawString("Time is\n   UP", (ofGetWidth()/2)-(font.getStringBoundingBox("Time is\n   UP", 0,0).width)/2, ofGetHeight()/2);
+		float scaleMult = sin(ofGetElapsedTimef())*.1 + 1.;
+        font.drawString("Time is\n   UP", (ofGetWidth()/2)-(font.getStringBoundingBox("Time is\n   UP", 0,0).width * scaleMult)/2, ofGetHeight()/2);
+		
+		// trigger any warnings that need to be depending on current conditions
+		warnings.triggerWarning(TIMESUP);
+		if(presentationTime>totalTime+30.){
+			warnings.triggerWarning(WAYOVER);
+		}else if (presentationTime>totalTime+60.){
+			warnings.triggerWarning(WAYWAYOVER);
+		}
     }
     
     if(timerIsPaused){
         ofSetColor(255,randomColorVal2,randomColorVal);
-                font.drawString("PAUSE", (ofGetWidth()/2)-(font.getStringBoundingBox("PAUSE", 0,0).width)/2, ofGetHeight()/2);
+		font.drawString("PAUSE", (ofGetWidth()/2)-(font.getStringBoundingBox("PAUSE", 0,0).width)/2, ofGetHeight()/2);
+	}else{
+		warnings.triggerWarning(STARTSOUND);
     }
     
     //Draw minute lines

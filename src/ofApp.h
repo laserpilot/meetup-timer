@@ -3,6 +3,21 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 
+
+class SessionWarning{
+public:
+	bool triggered = false;
+	string name = "";
+};
+class SessionWarningSystem{
+public:
+	map<string,SessionWarning>warnings;
+	ofSoundPlayer warningPlayer;
+	
+	void resetAll();
+	void triggerWarning(string name);
+	void addWarning(string name);
+};
 class ofApp : public ofBaseApp{
 	public:
 		void setup();
@@ -40,4 +55,8 @@ class ofApp : public ofBaseApp{
     ofxIntSlider totalMin;
     ofxToggle timerIsPaused;
     ofxToggle resetTimer;
+		
+	
+	SessionWarningSystem warnings;
+	
 };
