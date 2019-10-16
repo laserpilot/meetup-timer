@@ -69,6 +69,7 @@ void ofApp::setup(){
 	warnings.addWarning(WAYOVER);
 	warnings.addWarning(WAYWAYOVER);
 	
+    ofSetFullscreen(true);
 }
 
 
@@ -98,6 +99,11 @@ void ofApp::update(){
 		
 		// reset warning flags:
 		warnings.resetAll();
+        
+        
+        
+        presentationTime = ofGetElapsedTimef()-totalTimePaused-timerBegin;
+        countDownDist = ofMap(presentationTime,0,totalTime,0,ofGetWidth());
     }
     
 }
@@ -114,7 +120,7 @@ void ofApp::draw(){
      ofSetColor(255);
     
 	
-	if(presentationTime<totalTime){
+	if(!timerIsPaused && presentationTime<totalTime){
 		int invTime = totalTime-presentationTime;
 		int min =invTime/60;
 		int sec = fmod(invTime,60);
@@ -156,7 +162,7 @@ void ofApp::draw(){
         ofSetColor(255,randomColorVal2,randomColorVal);
 		font.drawString("PAUSE", (ofGetWidth()/2)-(font.getStringBoundingBox("PAUSE", 0,0).width)/2, ofGetHeight()/2);
 	}else{
-		warnings.triggerWarning(STARTSOUND);
+		if(presentationTime>2) warnings.triggerWarning(STARTSOUND);
     }
     
     //Draw minute lines
